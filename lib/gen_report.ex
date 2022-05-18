@@ -30,10 +30,10 @@ defmodule GenReport do
     all_hours = Map.put(all_hours, name, sum(all_hours[name], hours))
 
     hours_per_month =
-      Map.put(hours_per_month, name, sum_hours_by_month(hours_per_month[name], hours, month))
+      Map.put(hours_per_month, name, sum_hours_by(hours_per_month[name], hours, month))
 
     hours_per_year =
-      Map.put(hours_per_year, name, sum_hours_by_year(hours_per_year[name], hours, year))
+      Map.put(hours_per_year, name, sum_hours_by(hours_per_year[name], hours, year))
 
     build_report(all_hours, hours_per_month, hours_per_year)
   end
@@ -48,22 +48,17 @@ defmodule GenReport do
   #   build_report(foods, users)
   # end
 
-  defp merge_maps(map1, map2),
-    do: Map.merge(map1, map2, fn _key, value1, value2 -> value1 + value2 end)
-
   defp sum(nil, new), do: new
   defp sum(previous, new), do: previous + new
 
-  defp sum_hours_by_month(nil, hours, month), do: %{month => hours}
+  defp sum_hours_by(nil, hours, by), do: %{by => hours}
 
-  defp sum_hours_by_month(previous, hours, month) do
-    merge_maps(previous, %{month => hours})
+  defp sum_hours_by(previous, hours, by) do
+    merge_maps(previous, %{by => hours})
   end
 
-  defp sum_hours_by_year(nil, hours, year), do: %{year => hours}
-
-  defp sum_hours_by_year(previous, hours, year) do
-    merge_maps(previous, %{year => hours})
+  defp merge_maps(map1, map2) do
+    Map.merge(map1, map2, fn _key, value1, value2 -> value1 + value2 end)
   end
 
   def report_acc do
